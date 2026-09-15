@@ -7,6 +7,18 @@ const joinedInfo = document.querySelector('.js-joined-info')
 const editInfo = document.querySelector('.js-edit')
 
 let user = {}
+let hasBuzzed = false
+let buzzerEnabled = true
+
+const updateBuzzerButton = () => {
+  buzzer.disabled = !buzzerEnabled || hasBuzzed
+  buzzer.innerText = hasBuzzed ? 'Buzzed' : buzzerEnabled ? 'Buzz!!!' : 'Buzzer disabled'
+}
+
+const setBuzzedState = (buzzed) => {
+  hasBuzzed = buzzed
+  updateBuzzerButton()
+}
 
 const getUserInfo = () => {
   user = JSON.parse(localStorage.getItem('user')) || {}
@@ -35,12 +47,17 @@ form.addEventListener('submit', (e) => {
 })
 
 buzzer.addEventListener('click', (e) => {
-  socket.emit('buzz', user)
+  if (hasBuzzed) return
+  socket.emit('buzz', user, () => setBuzzedState(true))
 })
 
 socket.on('buzzerState', (enabled) => {
-  buzzer.disabled = !enabled
-  buzzer.innerText = enabled ? 'Buzz!!!' : 'Buzzer disabled'
+  buzzerEnabled = enabled
+  updateBuzzerButton()
+})
+
+socket.on('buzzes', (buzzes) => {
+  if (buzzes.length === 0) setBuzzedState(false)
 })
 
 editInfo.addEventListener('click', () => {

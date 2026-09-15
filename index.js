@@ -41,11 +41,12 @@ io.on('connection', (socket) => {
     console.log(`${user.name} joined!`)
   })
 
-  socket.on('buzz', (user) => {
+  socket.on('buzz', (user, acknowledge) => {
     if (!data.buzzerEnabled) return
 
     data.buzzes.add(`${user.name}-${user.team}`)
     io.emit('buzzes', [...data.buzzes])
+    if (typeof acknowledge === 'function') acknowledge()
     console.log(`${user.name} buzzed in!`)
   })
 

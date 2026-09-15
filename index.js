@@ -24,6 +24,11 @@ const getData = () => ({
   }),
   buzzerEnabled: data.buzzerEnabled,
 })
+app.use((req, res, next) => {
+  delete req.headers['if-modified-since']
+  delete req.headers['if-none-match']
+  next()
+})
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))

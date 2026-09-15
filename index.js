@@ -1,6 +1,8 @@
 const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
+const path = require('path')
+
 
 const app = express();
 const server = http.Server(app);
@@ -23,7 +25,8 @@ const getData = () => ({
   buzzerEnabled: data.buzzerEnabled,
 })
 
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
+app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
 
 app.get('/', (req, res) => res.render('index', { title }))

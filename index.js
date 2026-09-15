@@ -11,6 +11,7 @@ const title = 'Buffer Buzzer'
 let data = {
   users: new Set(),
   buzzes: new Set(),
+  buzzerEnabled: true,
 }
 
 const getData = () => ({
@@ -18,7 +19,8 @@ const getData = () => ({
   buzzes: [...data.buzzes].map(b => {
     const [ name, team ] = b.split('-')
     return { name, team }
-  })
+  }),
+  buzzerEnabled: data.buzzerEnabled,
 })
 
 app.use(express.static('public'))
@@ -28,6 +30,8 @@ app.get('/', (req, res) => res.render('index', { title }))
 app.get('/host', (req, res) => res.render('host', Object.assign({ title }, getData())))
 
 io.on('connection', (socket) => {
+  socket.emit('buzzerState', data.buzzerEnabled)
+
   socket.on('join', (user) => {
     data.users.add(user.id)
     io.emit('active', [...data.users].length)
@@ -35,6 +39,8 @@ io.on('connection', (socket) => {
   })
 
   socket.on('buzz', (user) => {
+    if (!data.buzzerEnabled) return
+
     data.buzzes.add(`${user.name}-${user.team}`)
     io.emit('buzzes', [...data.buzzes])
     console.log(`${user.name} buzzed in!`)
@@ -44,6 +50,14 @@ io.on('connection', (socket) => {
     data.buzzes = new Set()
     io.emit('buzzes', [...data.buzzes])
     console.log(`Clear buzzes`)
+  })
+
+  socket.on('setBuzzerEnabled', (enabled) => {
+    if (typeof enabled !== 'boolean') return
+
+    data.buzzerEnabled = enabled
+    io.emit('buzzerState', data.buzzerEnabled)
+    console.log(`Buzzer ${enabled ? 'enabled' : 'disabled'}`)
   })
 })
 

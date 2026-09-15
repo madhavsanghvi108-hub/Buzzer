@@ -38,6 +38,11 @@ buzzer.addEventListener('click', (e) => {
   socket.emit('buzz', user)
 })
 
+socket.on('buzzerState', (enabled) => {
+  buzzer.disabled = !enabled
+  buzzer.innerText = enabled ? 'Buzz!!!' : 'Buzzer disabled'
+})
+
 editInfo.addEventListener('click', () => {
   joined.classList.add('hidden')
   form.classList.remove('hidden')

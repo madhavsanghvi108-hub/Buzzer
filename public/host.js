@@ -2,10 +2,19 @@ const socket = io()
 const active = document.querySelector('.js-active')
 const buzzList = document.querySelector('.js-buzzes')
 const clear = document.querySelector('.js-clear')
+const disableBuzzer = document.querySelector('.js-disable-buzzer')
+const enableBuzzer = document.querySelector('.js-enable-buzzer')
+
+const updateBuzzerState = (enabled) => {
+  disableBuzzer.disabled = !enabled
+  enableBuzzer.disabled = enabled
+}
 
 socket.on('active', (numberActive) => {
   active.innerText = `${numberActive} joined`
 })
+
+socket.on('buzzerState', updateBuzzerState)
 
 socket.on('buzzes', (buzzes) => {
   buzzList.innerHTML = buzzes
@@ -19,5 +28,13 @@ socket.on('buzzes', (buzzes) => {
 
 clear.addEventListener('click', () => {
   socket.emit('clear')
+})
+
+disableBuzzer.addEventListener('click', () => {
+  socket.emit('setBuzzerEnabled', false)
+})
+
+enableBuzzer.addEventListener('click', () => {
+  socket.emit('setBuzzerEnabled', true)
 })
 

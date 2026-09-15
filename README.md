@@ -28,8 +28,8 @@ Open http://localhost:8090 in your browser to start!
 The players goto the homepage (`http://localhost:8090/`) and they can enter their name and team
 number. Joining will give them a giant buzzer button!
 
-The host heads over to `/host` and will be able to see everyone that buzzes in and clear the list
-in between questions.
+The host heads over to `/host` and will be able to see everyone that buzzes in, disable the buzzer
+when a round is over, and clear the list between questions.
 
 Join a team                | Buzz in                   | Host view                  |
 :-------------------------:|:-------------------------:|:-------------------------:|
